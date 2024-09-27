@@ -79,3 +79,81 @@ exit_program:
     ; Exit the program
     xor eax, eax
     ret
+
+------------------------------Code below adds the 3 number together----------------------------------
+
+; External declaration of printf function from C library
+extern printf
+
+section .data
+    ; Format string for printf to print the sum
+    mystr: db "The sum of the values is %ld", 10, 0
+    ; String containing the input digits
+    str1: db "Digits: %d", 10, 0
+    str: db "931", 0
+    num: dd 931
+section .bss
+    int1: resd 1
+    int2: resd 1
+    int3: resd 1
+    sum: resq 1
+
+section .text
+global main
+main:
+    mov rdi, str1
+    mov rsi, [num]
+    mov rax, 0
+    call printf
+
+    ; Loads the string into esi
+    mov esi, str
+
+    ; Load the first character of the string into al
+    mov al, byte [esi]
+
+    ; Convert ASCII character to integer by subtracting ASCII value of '0'
+    sub al, '0'
+
+    ; Store the first digit into int1
+    mov [int1], al
+
+    ; Move to the next character in the string
+    inc esi
+
+    ; Load the second character of the string into al
+    mov al, byte [esi]
+
+    ; Convert ASCII character to integer
+    sub al, '0'
+
+    ; Store the second digit into int2
+    mov [int2], al
+
+    ; Move to the next character in the string
+    inc esi
+
+    ; Load the third character of the string into al
+    mov al, byte [esi]
+
+    ; Convert ASCII character to integer
+    sub al, '0'
+
+    ; Store the third digit into int3
+    mov [int3], al
+
+    ; Calculate the sum of the digits
+    mov eax, dword [int1]   ; Load int1 into eax
+    add eax, dword [int2]   ; Add int2 to eax
+    add eax, dword [int3]   ; Add int3 to eax
+    mov [sum], rax          ; Store the sum in the sum variable
+
+    ; Print the sum
+    mov rdi, mystr          ; Format string for printf
+    mov rsi, qword [sum]    ; Load the sum as a 64-bit value
+    xor rax, rax            ; Clear rax (no floating point arguments)
+    call printf             ; Call printf function
+
+    ; Exit the program
+    xor eax, eax            ; Set return value to 0
+    ret                     ; Return to caller
